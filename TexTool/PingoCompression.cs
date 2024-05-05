@@ -4,20 +4,28 @@ using System.IO;
 
 namespace TexTool
 {
-	public class PingoCompression
+	public static class PingoCompression
 	{
-		public static void TryCompress(string fileName)
+		private const string PingoExecutable = "pingo.exe";
+		private static readonly string PingoPath;
+		private static readonly bool PingoExists;
+
+		static PingoCompression()
 		{
-			if (!fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+			PingoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PingoExecutable);
+			PingoExists = File.Exists(PingoPath);
+		}
+
+		public static bool TryCompress(string fileName)
+		{
+			if (PingoExists == false)
 			{
-				return;
+				return false;
 			}
 
-			var pingoPath = Path.Combine(Directory.GetCurrentDirectory(), "pingo.exe");
-
-			if (File.Exists(pingoPath) == false)
+			if (!fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
 			{
-				return;
+				return false;
 			}
 
 			// Command to pass the PNG file to Pingo for optimization
@@ -26,7 +34,7 @@ namespace TexTool
 			// Create process start info
 			var psi = new ProcessStartInfo
 			{
-				FileName = pingoPath,
+				FileName = PingoPath,
 				Arguments = command,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
@@ -56,6 +64,8 @@ namespace TexTool
 			{
 				Console.WriteLine("Error starting Pingo process.");
 			}
+
+			return true;
 		}
 	}
 }

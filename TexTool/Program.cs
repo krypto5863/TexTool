@@ -10,7 +10,7 @@ namespace TexTool
 {
     internal class Program
     {
-        private static bool _overwrite = false;
+        private static bool _overwrite;
 
         private static OptionSet _options = new OptionSet
         {
@@ -70,7 +70,7 @@ namespace TexTool
         {
             try
             {
-                PingoCompression.TryCompress(path);
+	            PingoCompression.TryCompress(path);
                 Texture.Convert(path, _overwrite);
             }
             catch (OutOfMemoryException)
