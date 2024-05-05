@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -11,14 +10,14 @@ namespace TexTool
 {
     internal class Program
     {
-        private static bool overwrite = false;
+        private static bool _overwrite = false;
 
-        private static OptionSet options = new OptionSet
+        private static OptionSet _options = new OptionSet
         {
             {"o", "overwrites files instead of backing them up", ow =>
             {
                 if (ow != null)
-                    overwrite = true;
+                    _overwrite = true;
             }}
         };
         
@@ -28,7 +27,7 @@ namespace TexTool
             var procname = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
             
             using var sw = new StringWriter();
-            options.WriteOptionDescriptions(sw);
+            _options.WriteOptionDescriptions(sw);
             
             var sb = new StringBuilder();
             sb.AppendLine($"TexTool {version}")
@@ -71,7 +70,8 @@ namespace TexTool
         {
             try
             {
-                Texture.Convert(path, overwrite);
+                PingoCompression.TryCompress(path);
+                Texture.Convert(path, _overwrite);
             }
             catch (OutOfMemoryException)
             {
@@ -141,7 +141,7 @@ namespace TexTool
             }
             args.Add(sb.ToString());
 
-            options.Parse(args);
+            _options.Parse(args);
         }
         
         public static void Main(string[] args)
